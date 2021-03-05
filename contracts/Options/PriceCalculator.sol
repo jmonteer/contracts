@@ -1,5 +1,5 @@
 pragma solidity 0.7.6;
-
+pragma abicoder v2;
 /**
  *  _____________________________________________
  * / oooooo   oooooo     oooo ooooo ooooooooo    \
@@ -36,7 +36,7 @@ pragma solidity 0.7.6;
 
 import "../Interfaces/Interfaces.sol";
 import "../utils/Math.sol";
-
+import "hardhat/console.sol";
 contract PriceCalculator is IPriceCalculator, Ownable {
     using SafeMath for uint256;
     using HegicMath for uint256;
@@ -130,7 +130,7 @@ contract PriceCalculator is IPriceCalculator, Ownable {
                 amount
                     .mul(_priceModifier(period))
                     .mul(strike)
-                    .div(PRICE_DECIMALS)
+                    .div(_currentPrice())
                     .div(PRICE_DECIMALS)
                     .div(DECIMALS_DIFF);
         else if (optionType == IHegicOptions.OptionType.Call)
@@ -150,9 +150,11 @@ contract PriceCalculator is IPriceCalculator, Ownable {
         else if (period < 4 weeks) iv = impliedVolRate[1];
         else iv = impliedVolRate[2];
         iv = iv.mul(period.sqrt());
+        console.log("Period", period);
+        console.log("PeriodSQRT", period.sqrt());
         uint256 utilization = pool.lockedAmount().mul(100e8).div(poolBalance);
         if (utilization > 40e8) {
-            iv = iv.mul(utilization.sub(40e8)).mul(utilizationRate).div(40e16);
+            iv += iv.mul(utilization.sub(40e8)).mul(utilizationRate).div(40e16);
         }
     }
 

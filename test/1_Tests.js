@@ -6,13 +6,13 @@ const tests = {
 }
 
 if(process.env.DEVMOD){
-    tests.HegicPool.test();
-    tests.HegicOptions.test();
+    // tests.HegicPool.test();
+    // tests.HegicOptions.test();
     tests.HegicOptionsPricer.test();
     tests.HegicStaking.test();
 } else {
-    tests.HegicPool.test();
-    tests.HegicOptions.test();
+    // tests.HegicPool.test();
+    // tests.HegicOptions.test();
     tests.HegicOptionsPricer.test();
-    tests.HegicStaking.test();
+    // tests.HegicStaking.test();
 }

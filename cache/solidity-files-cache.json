@@ -1423,8 +1423,8 @@
       ]
     },
     "/Users/juanmontero/Projects/DeFi/hegic/hegic-v888.0.1-contracts/contracts/Options/PriceCalculator.sol": {
-      "lastModificationDate": 1614633798422,
-      "contentHash": "35c8601aa45c0e68dd59876a89175a2c",
+      "lastModificationDate": 1614959827290,
+      "contentHash": "98b9dc75fcddc3d6244c527d75c17438",
       "sourceName": "contracts/Options/PriceCalculator.sol",
       "solcConfig": {
         "version": "0.7.6",
@@ -1459,7 +1459,8 @@
       },
       "imports": [
         "../Interfaces/Interfaces.sol",
-        "../utils/Math.sol"
+        "../utils/Math.sol",
+        "hardhat/console.sol"
       ],
       "versionPragmas": [
         "0.7.6"
