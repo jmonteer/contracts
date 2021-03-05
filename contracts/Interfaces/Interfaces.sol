@@ -85,9 +85,9 @@ interface IHegicLiquidityPool {
 
     function withdraw(uint256 trancheID) external returns (uint256 amount);
 
-    function withdrawWithoutHedge(uint256 trancheID)
-        external
-        returns (uint256 amount);
+    // function withdrawWithoutHedge(uint256 trancheID)
+    //     external
+    //     returns (uint256 amount);
 
     function lockedLiquidity(uint256 id)
         external

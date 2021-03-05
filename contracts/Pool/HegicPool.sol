@@ -20,6 +20,7 @@ pragma solidity 0.7.6;
  */
 
 import "../Interfaces/Interfaces.sol";
+import "hardhat/console.sol";
 
 /**
  * @author 0mllwntrmt3
@@ -56,6 +57,7 @@ contract HegicPool is IHegicLiquidityPool, Ownable, ERC721 {
         string memory symbol
     ) ERC721(name, symbol) {
         token = _token;
+        hedgePool = msg.sender;
     }
 
     /**
@@ -212,13 +214,14 @@ contract HegicPool is IHegicLiquidityPool, Ownable, ERC721 {
         }
     }
 
-    function withdrawWithoutHedge(uint256 trancheID)
-        external
-        override
-        returns (uint256 amount)
-    {
-        amount = _withdraw(trancheID);
-    }
+    // If used with a hedged tranche this leads to loosing 
+    // function withdrawWithoutHedge(uint256 trancheID)
+    //     external
+    //     override
+    //     returns (uint256 amount)
+    // {
+    //     amount = _withdraw(trancheID);
+    // }
 
     /*
      * @nonce Liquidity provider burns writeWBTC and receives WBTC from the pool
@@ -226,20 +229,21 @@ contract HegicPool is IHegicLiquidityPool, Ownable, ERC721 {
      */
     function _withdraw(uint256 trancheID) internal returns (uint256 amount) {
         Tranche storage t = tranches[trancheID];
-        require(t.state == TrancheState.Open);
-        require(_isApprovedOrOwner(msg.sender, trancheID));
+        require(t.state == TrancheState.Open, "!tranche already closed");
+        require(_isApprovedOrOwner(msg.sender, trancheID), "!not your tranche");
         require(
             t.creationTimestamp + lockupPeriod > block.timestamp,
             "Pool: Withdrawal is locked up"
         );
 
         t.state = TrancheState.Closed;
+        // wrong formulas in the original code
         if (t.hedged) {
-            amount = t.share.mul(hedgedShare).div(hedgedBalance);
+            amount = t.share.mul(hedgedBalance).div(hedgedShare);
             hedgedShare = hedgedShare.sub(t.share);
             hedgedBalance = hedgedBalance.sub(amount);
         } else {
-            amount = t.share.mul(unhedgedShare).div(unhedgedBalance);
+            amount = t.share.mul(unhedgedBalance).div(unhedgedShare);
             unhedgedShare = unhedgedShare.sub(t.share);
             unhedgedBalance = unhedgedBalance.sub(amount);
         }
